@@ -1,6 +1,6 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.0",
+   "version": "1.0.1",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
@@ -16,5 +16,15 @@
    "bugs": {
       "url": "https://github.com/ha8rt/http-service/issues"
    },
-   "homepage": "https://github.com/ha8rt/http-service#readme"
+   "homepage": "https://github.com/ha8rt/http-service#readme",
+   "dependencies": {
+      "@angular/common": "^8.2.1",
+      "@angular/core": "^8.2.1",
+      "@angular/router": "^8.2.1",
+      "@types/file-saver": "^2.0.1",
+      "file-saver": "^2.0.2",
+      "ngx-spinner": "^8.0.3",
+      "rxjs": "^6.5.2",
+      "zone.js": "^0.9.1"
+   }
 }
