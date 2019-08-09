@@ -1,6 +1,6 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.2",
+   "version": "1.0.4",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
@@ -20,6 +20,7 @@
    "dependencies": {
       "@angular/common": "^8.2.1",
       "@angular/core": "^8.2.1",
+      "@angular/platform-browser": "^8.2.1",
       "@angular/router": "^8.2.1",
       "@types/file-saver": "^2.0.1",
       "file-saver": "^2.0.2",

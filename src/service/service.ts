@@ -6,8 +6,10 @@ import { saveAs } from 'file-saver';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Body } from "../body/body";
 
+export type ConstructType = { http: HttpClient, spinner: NgxSpinnerService };
+
 export abstract class Service {
-   constructor(protected http: HttpClient, protected spinner?: NgxSpinnerService) { }
+   constructor(protected construct: ConstructType) { }
 
    abstract _get(
       filter?: IQuery,
@@ -27,7 +29,7 @@ export abstract class Service {
       sort: IQuery,
       callback: (value: HttpResponse<any> | any) => void
    ): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.http, api, filter, sort };
+      const param: Param = { http: this.construct.http, api, filter, sort };
       if (!callback) {
          return Obs.get(param);
       }
@@ -39,7 +41,7 @@ export abstract class Service {
       body: Body,
       callback: (value: HttpResponse<any> | any) => void
    ): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.http, api, body };
+      const param: Param = { http: this.construct.http, api, body };
       if (!callback) {
          return Obs.post(param);
       }
@@ -51,7 +53,7 @@ export abstract class Service {
       button: Body,
       callback: (value: HttpResponse<any> | any) => void
    ): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.http, api, body: button };
+      const param: Param = { http: this.construct.http, api, body: button };
       if (!callback) {
          return Obs.patch(param);
       }
@@ -59,7 +61,7 @@ export abstract class Service {
    }
 
    protected put(api: string, obj: ObjType, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.http, api, obj };
+      const param: Param = { http: this.construct.http, api, obj };
       if (!callback) {
          return Obs.put(param);
       }
@@ -67,7 +69,7 @@ export abstract class Service {
    }
 
    protected delete(api: string, id: string, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.http, api, id };
+      const param: Param = { http: this.construct.http, api, id };
       if (!callback) {
          return Obs.delete(param);
       }
@@ -75,7 +77,7 @@ export abstract class Service {
    }
 
    protected download(api: string, id: string, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.http, api, id };
+      const param: Param = { http: this.construct.http, api, id };
       if (!callback) {
          return Obs.download(param);
       }
@@ -93,7 +95,7 @@ export abstract class Service {
    protected upload(api: string, files: File[], callback: (listener: Observable<any>) => void): Observable<any> | any {
       const data = new FormData();
       for (const file of files) { if (file) { data.append('uploads', file, file.name); } }
-      const param: Param = { http: this.http, api, data };
+      const param: Param = { http: this.construct.http, api, data };
       if (!callback) {
          return Obs.upload(param);
       }
@@ -112,16 +114,17 @@ export abstract class Service {
       obs: (param: any) => Observable<HttpResponse<any>>,
       param: any,
       callback: (value: HttpResponse<any> | any) => void,
-      spinner = true
+      isSpinner = true
    ): HttpResponse<any> | any {
-      if (spinner && this.spinner) { this.spinner.show(); }
+      const spinner = this.construct.spinner;
+      if (isSpinner && spinner) { spinner.show(); }
       obs(param).subscribe((value) => {
          callback(value);
-         if (spinner && this.spinner) { this.spinner.hide(); }
+         if (isSpinner && spinner) { spinner.hide(); }
          return value;
       }, (error) => {
          callback(error);
-         if (spinner && this.spinner) { this.spinner.hide(); }
+         if (isSpinner && spinner) { spinner.hide(); }
          return error;
       });
    }

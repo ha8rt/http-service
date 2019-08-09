@@ -1,10 +1,9 @@
-import { Service } from '../service/service';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Service, ConstructType } from '../service/service';
+import { HttpResponse } from '@angular/common/http';
 import { IQuery } from '../service/query';
 import { ObjType } from '../service/obs';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
-import { NgxSpinnerService } from "ngx-spinner";
 import { Config } from '../config/config';
 import { Body } from '../body/body';
 
@@ -16,8 +15,8 @@ export interface Api {
 export class HttpService extends Service {
    private api!: string;
 
-   constructor(protected http: HttpClient, protected spinner?: NgxSpinnerService) {
-      super(http, spinner);
+   constructor(protected construct: ConstructType) {
+      super(construct);
    }
 
    setApi(api: Api): HttpService {
@@ -48,12 +47,13 @@ export class HttpService extends Service {
    }
 
    _forkJoin(sources: Observable<any>[], callback: (results: HttpResponse<any>[]) => void) {
-      if (this.spinner) { this.spinner.show(); }
+      const spinner = this.construct.spinner;
+      if (spinner) { spinner.show(); }
       forkJoin(sources).subscribe((results) => {
-         if (this.spinner) { this.spinner.hide(); }
+         if (spinner) { spinner.hide(); }
          callback(results);
       }, (error) => {
-         if (this.spinner) { this.spinner.hide(); }
+         if (spinner) { spinner.hide(); }
          callback(error);
       });
    }
