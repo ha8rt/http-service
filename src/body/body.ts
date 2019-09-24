@@ -38,4 +38,8 @@ export class Body {
       });
       return obj;
    }
+
+   getElement(id: string): IElement | undefined {
+      return (this.value[1] as IElement[]).find((value) => value.id === id);
+   }
 }
