@@ -37,10 +37,10 @@ export class HttpService extends Service {
       return super.put(this.api, obj, callback);
    }
    _delete(body: Body, callback: (value: any) => void): Observable<HttpResponse<any>> | any {
-      return super.delete(this.api, body.getId(), callback);
+      return super.delete(this.api, body ? body.getId() : '', callback);
    }
-   _download(id: string, callback: (value: any) => void): Observable<any> | any {
-      return super.download(this.api, id, callback);
+   _download(filter: IQuery, callback: (value: any) => void): Observable<any> | any {
+      return super.download(this.api, filter, callback);
    }
    _upload(files: File[], callback: (listener: Observable<any>) => void): Observable<any> {
       return super.upload(this.api, files, callback);

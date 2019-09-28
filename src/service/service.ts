@@ -20,7 +20,7 @@ export abstract class Service {
    abstract _patch(body: Body, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>>;
    abstract _put(obj: ObjType, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>>;
    abstract _delete(body: Body, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any;
-   abstract _download(id: string, callback: (value: HttpResponse<any> | any) => void): Observable<any> | any;
+   abstract _download(filter: IQuery, callback: (value: HttpResponse<any> | any) => void): Observable<any> | any;
    abstract _upload(files: File[], callback: (listener: Observable<any>) => void): Observable<any>;
 
    protected get(
@@ -76,8 +76,8 @@ export abstract class Service {
       return this.subscribe(Obs.delete, param, callback);
    }
 
-   protected download(api: string, id: string, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, id };
+   protected download(api: string, filter: IQuery, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
+      const param: Param = { http: this.construct.http, api, filter };
       if (!callback) {
          return Obs.download(param);
       }

@@ -20,18 +20,18 @@ export interface Param {
 }
 
 export class Obs {
-   public static get(param: Param): Observable<HttpResponse<any>> {
+   public static get(param: Param, options: any = { observe: 'response' }): Observable<HttpResponse<any>> {
       if (!param.filter) {
-         return param.http.get(param.api, { observe: 'response' }) as any;
+         return param.http.get(param.api, options) as any;
       }
       const filterStr = param.filter.toString();
       let body: ObjType = {};
       if (filterStr.length > Config.maxFilterLength || param.sort) { body = Object.assign(body, { filter: param.filter.toObject() }); }
       if (param.sort) { body = Object.assign(body, { sort: param.sort.toObject() }); }
       if (Object.keys(body).length > 0) {
-         return param.http.post(param.api + '/query', body, { observe: 'response' }) as any;
+         return param.http.post(param.api + '/query', body, options) as any;
       } else {
-         return param.http.get(param.api + '/' + filterStr, { observe: 'response' }) as any;
+         return param.http.get(param.api + '/' + filterStr, options) as any;
       }
    }
 
@@ -50,11 +50,12 @@ export class Obs {
    }
 
    public static delete(param: Param): Observable<HttpResponse<any>> {
-      return param.http.delete(param.api + '/' + param.id, { observe: 'response' }) as any;
+      return param.http.delete(param.api + (param.id ? ('/' + param.id) : ''), { observe: 'response' }) as any;
    }
 
    public static download(param: Param): Observable<any> {
-      return param.http.get(param.api + '/' + param.id, { responseType: 'blob', observe: 'response' }) as any;
+      return Obs.get(param, { responseType: 'blob', observe: 'response' });
+      // return param.http.get(param.api + '/' + param.id, { responseType: 'blob', observe: 'response' }) as any;
    }
 
    public static upload(param: Param): Observable<any> {

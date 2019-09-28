@@ -56,7 +56,7 @@ export class IType {
       if (this.modifier) {
          return this.field + '$' + this.modifier + '$' + (this.value instanceof Array ? this.value.join(',') : this.value);
       } else {
-         return this.field + '=' + this.value;
+         return this.value ? this.field + '=' + this.value : '';
       }
    }
 
