@@ -1,6 +1,6 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.5",
+   "version": "1.0.6",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
@@ -18,14 +18,14 @@
    },
    "homepage": "https://github.com/ha8rt/http-service#readme",
    "dependencies": {
-      "@angular/common": "^8.2.1",
-      "@angular/core": "^8.2.1",
-      "@angular/platform-browser": "^8.2.1",
-      "@angular/router": "^8.2.1",
+      "@angular/common": "^8.2.8",
+      "@angular/core": "^8.2.8",
+      "@angular/platform-browser": "^8.2.8",
+      "@angular/router": "^8.2.8",
       "@types/file-saver": "^2.0.1",
       "file-saver": "^2.0.2",
       "ngx-spinner": "^8.0.3",
-      "rxjs": "^6.5.2",
+      "rxjs": "^6.5.3",
       "zone.js": "^0.9.1"
    }
 }
