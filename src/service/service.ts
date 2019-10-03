@@ -6,10 +6,13 @@ import { saveAs } from 'file-saver';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Body } from "../body/body";
 
-export type ConstructType = { http: HttpClient, spinner: NgxSpinnerService };
+export interface IConstruct {
+   http: HttpClient,
+   spinner?: NgxSpinnerService
+};
 
 export abstract class Service {
-   constructor(protected construct: ConstructType) { }
+   constructor(protected construct: IConstruct) { }
 
    abstract _get(
       filter?: IQuery,

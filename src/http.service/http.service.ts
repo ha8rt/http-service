@@ -1,4 +1,4 @@
-import { Service, ConstructType } from '../service/service';
+import { Service, IConstruct } from '../service/service';
 import { HttpResponse } from '@angular/common/http';
 import { IQuery } from '../service/query';
 import { ObjType } from '../service/obs';
@@ -7,7 +7,7 @@ import { forkJoin } from 'rxjs';
 import { Config } from '../config/config';
 import { Body } from '../body/body';
 
-export interface Api {
+export interface IApi {
    secure: boolean;
    route: string;
 }
@@ -15,11 +15,11 @@ export interface Api {
 export class HttpService extends Service {
    private api!: string;
 
-   constructor(protected construct: ConstructType) {
+   constructor(protected construct: IConstruct) {
       super(construct);
    }
 
-   setApi(api: Api): HttpService {
+   setApi(api: IApi): HttpService {
       this.api = (api.secure ? Config.secureAPI : Config.publicAPI) + api.route;
       return this;
    }
