@@ -25,7 +25,8 @@ export class IQuery {
    toString(): string {
       let str = '';
       this.value.forEach((element) => {
-         str += element.toString() + ':';
+         const elem = element.toString();
+         str += elem + (elem ? ':' : '');
       });
       return str;
    }
@@ -56,7 +57,7 @@ export class IType {
       if (this.modifier) {
          return this.field + '$' + this.modifier + '$' + (this.value instanceof Array ? this.value.join(',') : this.value);
       } else {
-         return this.value ? this.field + '=' + this.value : '';
+         return this.value !== undefined ? this.field + '=' + this.value : '';
       }
    }
 
