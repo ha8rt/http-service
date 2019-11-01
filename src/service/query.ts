@@ -5,7 +5,7 @@ export class IQuery {
    private value: IType[];
 
    constructor(value: IType[]) {
-      this.value = value;
+      this.value = value.filter((type) => { return type ? true : false; });
    }
 
    addFilter(filter: IType): IQuery {
