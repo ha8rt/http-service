@@ -1,11 +1,11 @@
 import { ParamMap } from '@angular/router';
-import { ObjType } from './obs';
+import { IObject } from './observables';
 
 export class IQuery {
    private value: IType[];
 
    constructor(value: IType[]) {
-      this.value = value.filter((type) => { return type ? true : false; });
+      this.value = value.filter((type) => type ? true : false);
    }
 
    addFilter(filter: IType): IQuery {
@@ -32,7 +32,7 @@ export class IQuery {
    }
 
    toObject(): object {
-      let obj: ObjType = {};
+      let obj: IObject = {};
       this.value.forEach((element) => {
          obj = Object.assign(obj, element.toObject());
       });
@@ -62,9 +62,9 @@ export class IType {
    }
 
    toObject(): object {
-      const obj: ObjType = {};
+      const obj: IObject = {};
       if (this.modifier) {
-         const mod: ObjType = {};
+         const mod: IObject = {};
          mod['$' + this.modifier] = this.value;
          obj[this.field] = mod;
       } else {
@@ -74,19 +74,6 @@ export class IType {
    }
 }
 
-export class Query {
-   static active = new IType('isActive', 'true');
-   static duped = new IType('status', 4);
-   static sort = {
-      callsign: new IType('callsign', 1),
-      callsignValue: new IType('callsign.value', 1),
-      round: new IType('round', 'asc'),
-      roundCode: new IType('round.code', 1),
-      statusDesc: new IType('status', 'desc'),
-   };
-}
-
-
 export function getParamFilter(params: ParamMap, modifier = 'in'): IQuery {
    const filter: IType[] = [];
    for (const key of params.keys) {
@@ -95,3 +82,16 @@ export function getParamFilter(params: ParamMap, modifier = 'in'): IQuery {
    }
    return new IQuery(filter);
 }
+
+// export class Query {
+//    static active = new IType('isActive', 'true');
+//    static duped = new IType('status', 4);
+//    static sort = {
+//       callsign: new IType('callsign', 1),
+//       callsignValue: new IType('callsign.value', 1),
+//       round: new IType('round', 'asc'),
+//       roundCode: new IType('round.code', 1),
+//       statusDesc: new IType('status', 'desc'),
+//    };
+// }
+

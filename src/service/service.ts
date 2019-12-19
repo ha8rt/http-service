@@ -1,111 +1,88 @@
 import { Observable, Subject } from 'rxjs';
 import { HttpResponse, HttpClient, HttpEventType } from '@angular/common/http';
-import { Obs, ObjType, Param } from './obs';
+import { Observables, IObject, IParams, ICallback, IObservable } from './observables';
 import { IQuery } from './query';
 import { saveAs } from 'file-saver';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { Body } from "../body/body";
-
-export interface IConstruct {
-   http: HttpClient,
-   spinner?: NgxSpinnerService
-};
+import { Body } from '../body/body';
 
 export abstract class Service {
-   constructor(protected construct: IConstruct) { }
+   constructor(protected http: HttpClient) { }
 
-   abstract _get(
-      filter?: IQuery,
-      callback?: (value: HttpResponse<any> | any) => void,
-      sort?: IQuery,
-   ): Observable<HttpResponse<any>> | any;
-   abstract _post(body: Body, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any;
-   abstract _patch(body: Body, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>>;
-   abstract _put(obj: ObjType, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>>;
-   abstract _delete(body: Body, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any;
-   abstract _download(filter: IQuery, callback: (value: HttpResponse<any> | any) => void): Observable<any> | any;
+   abstract _get<T>(filter?: IQuery, callback?: ICallback<T>, sort?: IQuery): IObservable<T>;
+   abstract _post<T>(body: Body, callback?: ICallback<T>): IObservable<T>;
+   abstract _patch<T>(body: Body, callback?: ICallback<T>): IObservable<T>;
+   abstract _put<T>(obj: IObject, callback?: ICallback<T>): IObservable<T>;
+   abstract _delete<T>(body: Body, callback?: ICallback<T>): IObservable<T>;
+   abstract _download<T>(filter: IQuery, callback?: ICallback<T>): IObservable<T>;
    abstract _upload(files: File[], callback: (listener: Observable<any>) => void): Observable<any>;
 
-   protected get(
-      api: string,
-      filter: IQuery,
-      sort: IQuery,
-      callback: (value: HttpResponse<any> | any) => void
-   ): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, filter, sort };
+   protected get<T>(api: string, filter?: IQuery, sort?: IQuery, callback?: ICallback<T>): IObservable<T> {
+      const param: IParams = { http: this.http, api, filter, sort };
       if (!callback) {
-         return Obs.get(param);
+         return Observables.get<T>(param);
       }
-      return this.subscribe(Obs.get, param, callback);
+      return this.subscribe<T>(Observables.get, param, callback);
    }
 
-   protected post(
-      api: string,
-      body: Body,
-      callback: (value: HttpResponse<any> | any) => void
-   ): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, body };
+   protected post<T>(api: string, body: Body, callback?: ICallback<T>): IObservable<T> {
+      const param: IParams = { http: this.http, api, body };
       if (!callback) {
-         return Obs.post(param);
+         return Observables.post<T>(param);
       }
-      return this.subscribe(Obs.post, param, callback);
+      return this.subscribe<T>(Observables.post, param, callback);
    }
 
-   protected patch(
-      api: string,
-      button: Body,
-      callback: (value: HttpResponse<any> | any) => void
-   ): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, body: button };
+   protected patch<T>(api: string, body: Body, callback?: ICallback<T>): IObservable<T> {
+      const param: IParams = { http: this.http, api, body };
       if (!callback) {
-         return Obs.patch(param);
+         return Observables.patch<T>(param);
       }
-      return this.subscribe(Obs.patch, param, callback, false);
+      return this.subscribe<T>(Observables.patch, param, callback);
    }
 
-   protected put(api: string, obj: ObjType, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, obj };
+   protected put<T>(api: string, obj: IObject, callback?: ICallback<T>): IObservable<T> {
+      const param: IParams = { http: this.http, api, obj };
       if (!callback) {
-         return Obs.put(param);
+         return Observables.put<T>(param);
       }
-      return this.subscribe(Obs.put, param, callback, false);
+      return this.subscribe<T>(Observables.put, param, callback);
    }
 
-   protected delete(api: string, id: string, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, id };
+   protected delete<T>(api: string, id: string, callback?: ICallback<T>): IObservable<T> {
+      const param: IParams = { http: this.http, api, id };
       if (!callback) {
-         return Obs.delete(param);
+         return Observables.delete<T>(param);
       }
-      return this.subscribe(Obs.delete, param, callback);
+      return this.subscribe<T>(Observables.delete, param, callback);
    }
 
-   protected download(api: string, filter: IQuery, callback: (value: HttpResponse<any> | any) => void): Observable<HttpResponse<any>> | any {
-      const param: Param = { http: this.construct.http, api, filter };
+   protected download<T>(api: string, filter: IQuery, callback?: ICallback<T>): IObservable<T> {
+      const param: IParams = { http: this.http, api, filter };
       if (!callback) {
-         return Obs.download(param);
+         return Observables.download<T>(param);
       }
-      return this.subscribe(Obs.download, param, (value) => {
+      return this.subscribe<T>(Observables.download, param, (value) => {
          const contentDisposition: string = value.headers.get('Content-Disposition');
          const contentType: string = value.headers.get('Content-Type');
          const parts: string[] = contentDisposition.split(';');
          const filename = parts[1].split('=')[1].split('\"')[1];
          const blob = new Blob([value.body], { type: contentType });
          saveAs(blob, filename);
-         callback(filename);
+         // callback(filename);
       });
    }
 
-   protected upload(api: string, files: File[], callback: (listener: Observable<any>) => void): Observable<any> | any {
+   protected upload(api: string, files: File[], callback?: (listener: Observable<any>) => void): Observable<any> | any {
       const data = new FormData();
       for (const file of files) { if (file) { data.append('uploads', file, file.name); } }
-      const param: Param = { http: this.construct.http, api, data };
+      const param: IParams = { http: this.http, api, data };
       if (!callback) {
-         return Obs.upload(param);
+         return Observables.upload(param);
       }
       const event = new Subject<any>();
       callback(event.asObservable());
-      Obs.upload(param).subscribe((progress) => {
-         if (progress.type === HttpEventType.UploadProgress) {
+      Observables.upload(param).subscribe((progress) => {
+         if (progress.type === HttpEventType.UploadProgress && progress.total) {
             event.next(Math.round(progress.loaded / progress.total * 100));
          } else if (progress instanceof HttpResponse) {
             event.next(progress);
@@ -113,22 +90,16 @@ export abstract class Service {
       });
    }
 
-   private subscribe(
-      obs: (param: any) => Observable<HttpResponse<any>>,
-      param: any,
+   private subscribe<T>(
+      obs: (params: IParams) => IObservable<T>,
+      params: IParams,
       callback: (value: HttpResponse<any> | any) => void,
-      isSpinner = true
-   ): HttpResponse<any> | any {
-      const spinner = this.construct.spinner;
-      if (isSpinner && spinner) { spinner.show(); }
-      obs(param).subscribe((value) => {
+   ): IObservable<T> {
+      obs(params).subscribe((value) => {
          callback(value);
-         if (isSpinner && spinner) { spinner.hide(); }
-         return value;
       }, (error) => {
          callback(error);
-         if (isSpinner && spinner) { spinner.hide(); }
-         return error;
       });
+      return undefined as unknown as IObservable<T>;
    }
 }

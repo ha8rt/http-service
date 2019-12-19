@@ -1,7 +1,7 @@
-import { Service, IConstruct } from '../service/service';
-import { HttpResponse } from '@angular/common/http';
+import { Service } from '../service/service';
+import { HttpResponse, HttpClient } from '@angular/common/http';
 import { IQuery } from '../service/query';
-import { ObjType } from '../service/obs';
+import { IObject, IObservable, ICallback } from '../service/observables';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { Config } from '../config/config';
@@ -15,8 +15,8 @@ export interface IApi {
 export class HttpService extends Service {
    private api!: string;
 
-   constructor(protected construct: IConstruct) {
-      super(construct);
+   constructor(protected http: HttpClient) {
+      super(http);
    }
 
    setApi(api: IApi): HttpService {
@@ -24,21 +24,22 @@ export class HttpService extends Service {
       return this;
    }
 
-   _get(filter?: IQuery, callback?: (value: any) => void, sort?: IQuery): Observable<HttpResponse<any>> | any {
-      return super.get(this.api, (filter as IQuery), (sort as IQuery), (callback as (value: any) => void));
+   _get<T>(filter?: IQuery, callback?: ICallback<T>, sort?: IQuery): IObservable<T> {
+      return super.get(this.api, filter, sort, callback);
    }
-   _post(body: Body, callback: (value: any) => void): Observable<HttpResponse<any>> | any {
+   _post<T>(body: Body, callback?: ICallback<T>): IObservable<T> {
       return super.post(this.api, body, callback);
    }
-   _patch(body: Body, callback: (value: any) => void): Observable<HttpResponse<any>> | any {
+   _patch<T>(body: Body, callback?: ICallback<T>): IObservable<T> {
       return super.patch(this.api, body, callback);
    }
-   _put(obj: ObjType, callback: (value: any) => void): Observable<HttpResponse<any>> {
-      return super.put(this.api, obj, callback);
+   _put<T>(body: IObject, callback?: ICallback<T>): IObservable<T> {
+      return super.put(this.api, body, callback);
    }
-   _delete(body: Body, callback: (value: any) => void): Observable<HttpResponse<any>> | any {
+   _delete<T>(body: Body, callback?: ICallback<T>): IObservable<T> {
       return super.delete(this.api, body ? body.getId() : '', callback);
    }
+
    _download(filter: IQuery, callback: (value: any) => void): Observable<any> | any {
       return super.download(this.api, filter, callback);
    }
@@ -47,13 +48,9 @@ export class HttpService extends Service {
    }
 
    _forkJoin(sources: Observable<any>[], callback: (results: HttpResponse<any>[]) => void) {
-      const spinner = this.construct.spinner;
-      if (spinner) { spinner.show(); }
       forkJoin(sources).subscribe((results) => {
-         if (spinner) { spinner.hide(); }
          callback(results);
       }, (error) => {
-         if (spinner) { spinner.hide(); }
          callback(error);
       });
    }

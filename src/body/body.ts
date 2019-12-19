@@ -1,4 +1,4 @@
-import { ObjType } from "../service/obs";
+import { IObject } from '../service/observables';
 
 export interface IElement {
    id: string;
@@ -30,7 +30,7 @@ export class Body {
    }
 
    getPatchValues(): object {
-      const obj: ObjType = {};
+      const obj: IObject = {};
       (this.value[1] as IElement[]).forEach(element => {
          if (!element.disabled) {
             obj[element.id.split('-').reverse()[0]] = element.value === undefined ? null : element.value;
