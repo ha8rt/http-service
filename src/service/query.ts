@@ -67,7 +67,7 @@ export class IType {
          const mod: IObject = {};
          mod['$' + this.modifier] = this.value;
          obj[this.field] = mod;
-      } else {
+      } else if (this.value !== undefined) {
          obj[this.field] = this.value;
       }
       return obj;
