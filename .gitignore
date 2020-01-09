@@ -6,3 +6,4 @@ tmp/
 temp/
 uploads/
 dist/
+tsconfig.tsbuildinfo
