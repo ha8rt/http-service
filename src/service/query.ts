@@ -1,45 +1,6 @@
 import { ParamMap } from '@angular/router';
 import { IObject } from './observables';
 
-export class IQuery {
-   private value: IType[];
-
-   constructor(value: IType[]) {
-      this.value = value.filter((type) => type ? true : false);
-   }
-
-   addFilter(filter: IType): IQuery {
-      this.value.push(filter);
-      return this;
-   }
-
-   addQuery(query: IQuery): IQuery {
-      this.value = this.value.concat(query.getValue());
-      return this;
-   }
-
-   getValue(): IType[] {
-      return this.value;
-   }
-
-   toString(): string {
-      let str = '';
-      this.value.forEach((element) => {
-         const elem = element.toString();
-         str += elem + (elem ? ':' : '');
-      });
-      return str;
-   }
-
-   toObject(): object {
-      let obj: IObject = {};
-      this.value.forEach((element) => {
-         obj = Object.assign(obj, element.toObject());
-      });
-      return obj;
-   }
-}
-
 export class IType {
    field: string;
    modifier?: string;
@@ -74,6 +35,49 @@ export class IType {
    }
 }
 
+export class IQuery {
+   private value: IType[];
+
+   constructor(value: IType[]) {
+      this.value = value.filter((type) => type ? true : false);
+   }
+
+   addFilter(filter: IType): IQuery {
+      this.value.push(filter);
+      return this;
+   }
+
+   addQuery(query: IQuery | object): IQuery {
+      if (query instanceof IQuery) {
+         this.value = this.value.concat(query.getValue());
+      } else {
+         this.value = this.value.concat(Object.keys(query).map((key) => new IType(key, query[key])));
+      }
+      return this;
+   }
+
+   getValue(): IType[] {
+      return this.value;
+   }
+
+   toString(): string {
+      let str = '';
+      this.value.forEach((element) => {
+         const elem = element.toString();
+         str += elem + (elem ? ':' : '');
+      });
+      return str;
+   }
+
+   toObject(): object {
+      let obj: IObject = {};
+      this.value.forEach((element) => {
+         obj = Object.assign(obj, element.toObject());
+      });
+      return obj;
+   }
+}
+
 export function getParamFilter(params: ParamMap, modifier = 'in'): IQuery {
    const filter: IType[] = [];
    for (const key of params.keys) {
@@ -82,16 +86,3 @@ export function getParamFilter(params: ParamMap, modifier = 'in'): IQuery {
    }
    return new IQuery(filter);
 }
-
-// export class Query {
-//    static active = new IType('isActive', 'true');
-//    static duped = new IType('status', 4);
-//    static sort = {
-//       callsign: new IType('callsign', 1),
-//       callsignValue: new IType('callsign.value', 1),
-//       round: new IType('round', 'asc'),
-//       roundCode: new IType('round.code', 1),
-//       statusDesc: new IType('status', 'desc'),
-//    };
-// }
-

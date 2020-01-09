@@ -1,10 +1,9 @@
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { forkJoin, Observable, Subject } from 'rxjs';
-import { Config } from '../config/config';
-import { ICallback, IData, IObject, IObservable, Observables } from './observables';
-import { Body } from '../body/body';
-import { IQuery } from './query';
+import { Body } from '@ha8rt/modal';
 import { saveAs } from 'file-saver';
+import { forkJoin, Observable, Subject } from 'rxjs';
+import { ICallback, IData, IObject, IObservable, Observables } from './observables';
+import { IQuery } from './query';
 
 export interface IApi {
    secure: boolean;
@@ -12,54 +11,43 @@ export interface IApi {
 }
 
 export class HttpService {
-   private api!: string;
+   private api = '';
 
-   constructor(private http: HttpClient) {
+   constructor(private http: HttpClient, api?: string) {
+      this.api = api ? api : this.api;
    }
 
    public setApi(api: IApi): HttpService {
-      this.api = (api.secure ? Config.secureAPI : Config.publicAPI) + api.route;
+      this.api = (api.secure ? '/api' : '/api/public') + api.route;
       return this;
    }
 
-   public get<T>(params: IObject, callback?: ICallback<T>): IObservable<T> {
-      if (params instanceof IQuery) {
-         params = params.toObject();
-      }
-      const data: IData = { http: this.http, api: this.api, params };
+   public get<T>(params: IObject | IQuery, callback?: ICallback<T>): IObservable<T> {
+      const data: IData = { http: this.http, api: this.api, params: params?.toObject ? params.toObject() : params };
       if (!callback) {
          return Observables.get<T>(data);
       }
       return this.subscribe<T>(Observables.get, data, callback);
    }
 
-   public post<T>(body: IObject, callback?: ICallback<T>): IObservable<T> {
-      if (body instanceof Body) {
-         body = body.getPatchValues();
-      }
-      const data: IData = { http: this.http, api: this.api, body };
+   public post<T>(body: IObject | Body, callback?: ICallback<T>): IObservable<T> {
+      const data: IData = { http: this.http, api: this.api, body: body?.getPatchValues ? body.getPatchValues() : body };
       if (!callback) {
          return Observables.post<T>(data);
       }
       return this.subscribe<T>(Observables.post, data, callback);
    }
 
-   public patch<T>(id: any, body: IObject, callback?: ICallback<T>): IObservable<T> {
-      if (body instanceof Body) {
-         body = body.getPatchValues();
-      }
-      const data: IData = { http: this.http, api: this.api, body, id };
+   public patch<T>(id: any, body: IObject | Body, callback?: ICallback<T>): IObservable<T> {
+      const data: IData = { http: this.http, api: this.api, body: body?.getPatchValues ? body.getPatchValues() : body, id };
       if (!callback) {
          return Observables.patch<T>(data);
       }
       return this.subscribe<T>(Observables.patch, data, callback);
    }
 
-   public put<T>(body: IObject, callback?: ICallback<T>): IObservable<T> {
-      if (body instanceof Body) {
-         body = body.getPatchValues();
-      }
-      const data: IData = { http: this.http, api: this.api, body };
+   public put<T>(body: IObject | Body, callback?: ICallback<T>): IObservable<T> {
+      const data: IData = { http: this.http, api: this.api, body: body?.getPatchValues ? body.getPatchValues() : body };
       if (!callback) {
          return Observables.put<T>(data);
       }

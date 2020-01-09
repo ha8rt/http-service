@@ -1,4 +1,2 @@
-export class Config {
-   static publicAPI = '/api/public';
-   static secureAPI = '/api';
-}
+export * from './http.config';
+export * from './translate.config';
