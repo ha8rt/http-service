@@ -84,12 +84,12 @@ export class HttpService {
       });
    }
 
-   public upload(files: File[], callback: (listener: Observable<any>) => void): Observable<any> {
+   public upload<T>(files: File[], callback: (listener: Observable<number | HttpResponse<T>>) => void): IObservable<T> {
       const body = new FormData();
       for (const file of files) { if (file) { body.append('uploads', file, file.name); } }
       const data: IData = { http: this.http, api: this.api, body };
       if (!callback) {
-         return Observables.upload(data);
+         return Observables.upload<T>(data);
       }
       const event = new Subject<any>();
       callback(event.asObservable());
