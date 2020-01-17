@@ -1,6 +1,6 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.14",
+   "version": "1.0.15",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
@@ -29,7 +29,7 @@
       "@fortawesome/free-solid-svg-icons": "^5.12.0",
       "@ha8rt/alert": "0.0.2",
       "@ha8rt/icon": "0.0.13",
-      "@ha8rt/modal": "0.0.27",
+      "@ha8rt/modal": "0.0.28",
       "@ha8rt/table": "0.0.50",
       "@types/file-saver": "^2.0.1",
       "file-saver": "^2.0.2",
