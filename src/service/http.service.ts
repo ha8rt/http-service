@@ -62,7 +62,7 @@ export class HttpService {
       return this.subscribe<T>(Observables.delete, data, callback);
    }
 
-   public download(params: IObject, callback: (value: any) => void): Observable<any> {
+   public download(params: IObject, callback: (progress: number) => void): Observable<any> {
       if (params instanceof IQuery) {
          params = params.toObject();
       }
@@ -70,17 +70,21 @@ export class HttpService {
       if (!callback) {
          return Observables.download<any>(data);
       }
-      return this.subscribe<any>(Observables.download, data, (value) => {
-         const res = value as HttpResponse<any>;
-         const contentDisposition: string = String(res.headers.get('Content-Disposition'));
-         const contentType: string = String(res.headers.get('Content-Type'));
-         const parts: string[] = contentDisposition.split(';');
-         const filename = parts[1].split('=')[1].split('\"')[1];
-         if (res.body) {
-            const blob = new Blob([res.body], { type: contentType });
-            saveAs(blob, filename);
+      return this.subscribe<any>(Observables.download, data, (progress: any) => {
+         if (progress.type === HttpEventType.DownloadProgress) {
+            console.log(progress);
+            callback(Math.round(progress.loaded / progress.total * 100));
+         } else if (progress instanceof HttpResponse) {
+            const res = progress as HttpResponse<any>;
+            const contentDisposition: string = String(res.headers.get('Content-Disposition'));
+            const contentType: string = String(res.headers.get('Content-Type'));
+            const parts: string[] = contentDisposition.split(';');
+            const filename = parts[1].split('=')[1].split('\"')[1];
+            if (res.body) {
+               const blob = new Blob([res.body], { type: contentType });
+               saveAs(blob, filename);
+            }
          }
-         // callback(filename);
       });
    }
 

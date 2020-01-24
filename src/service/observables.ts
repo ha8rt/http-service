@@ -41,7 +41,7 @@ export class Observables {
    }
 
    public static download<T>(data: IData): IObservable<T> {
-      return Observables.get<T>(data, { responseType: 'blob', observe: 'response' });
+      return Observables.get<T>(data, { responseType: 'blob', observe: 'events', reportProgress: true });
    }
 
    public static upload<T>(data: IData): IObservable<T> {
