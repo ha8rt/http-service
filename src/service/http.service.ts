@@ -2,6 +2,7 @@ import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Body } from '@ha8rt/modal';
 import { saveAs } from 'file-saver';
 import { forkJoin, Observable, Subject } from 'rxjs';
+import { isResultValid } from '../interceptors/interceptors';
 import { ICallback, IData, IObject, IObservable, Observables } from './observables';
 import { IQuery } from './query';
 
@@ -72,9 +73,8 @@ export class HttpService {
       }
       return this.subscribe<any>(Observables.download, data, (progress: any) => {
          if (progress.type === HttpEventType.DownloadProgress) {
-            console.log(progress);
             callback(Math.round(progress.loaded / progress.total * 100));
-         } else if (progress instanceof HttpResponse) {
+         } else if (isResultValid(progress)) {
             const res = progress as HttpResponse<any>;
             const contentDisposition: string = String(res.headers.get('Content-Disposition'));
             const contentType: string = String(res.headers.get('Content-Type'));
@@ -100,7 +100,7 @@ export class HttpService {
       return this.subscribe<any>(Observables.upload, data, (progress: any) => {
          if (progress.type === HttpEventType.UploadProgress && progress.total) {
             event.next(Math.round(progress.loaded / progress.total * 100));
-         } else if (progress instanceof HttpResponse) {
+         } else if (isResultValid(progress)) {
             event.next(progress);
          }
       });
