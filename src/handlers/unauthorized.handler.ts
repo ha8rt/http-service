@@ -1,7 +1,7 @@
-import { InitButton, ButtonType, IModalHandler, initModal } from '@ha8rt/modal';
+import { InitButton, ButtonType, ModalHandler } from '@ha8rt/modal';
 
-export function unauthorizedHandler(): IModalHandler {
-   const handler: IModalHandler = initModal();
+export function unauthorizedHandler(): ModalHandler {
+   const handler: ModalHandler = new ModalHandler();
    handler.title = 'Unauthorized.';
    handler.text = 'You are not authorized to perform this operation.';
    [handler.buttons] = InitButton({ type: ButtonType.Ok, prefix: 'unauthorized' }, 1);
