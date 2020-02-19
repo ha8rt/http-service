@@ -5,7 +5,8 @@
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "publish-dist": "rm -rf dist && rm tsconfig.tsbuildinfo && tsc --extendedDiagnostics && cp package.json dist/ && cp package-lock.json dist/ && npm publish dist"
    },
    "repository": {
       "type": "git",
