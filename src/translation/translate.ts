@@ -1,4 +1,3 @@
-import { defaultLocale } from '../config/translate.config';
 import { TranslatePipe } from './translate.pipe';
 
 export function translate(key: string): string | undefined {
@@ -6,10 +5,10 @@ export function translate(key: string): string | undefined {
    if (endWithColon) {
       key = key.substr(0, key.length - 1);
    }
-   const translations = TranslatePipe.translations;
+   const translations = TranslatePipe.getTranslations();
    let translation = '';
    // a nyelv megegyezik a törzs alapértelmezett nyelvével (egyedi kulcs - nem fordítjuk)
-   if (TranslatePipe.locale === defaultLocale) {
+   if (TranslatePipe.getLocale() === TranslatePipe.getDefaultLocale()) {
       translation = key;
       // valamelyik bemeneti adat null vagy undefined
    } else if (!key || !translations) {
