@@ -13,6 +13,8 @@ export interface IGetTranslation {
    hu?: string;
 }
 
+export type localeType = keyof typeof Locales;
+
 @Pipe({
    name: 'translate',
    pure: false,
@@ -21,7 +23,7 @@ export class TranslatePipe implements PipeTransform {
    private static translations: ITranslation = {};
    private static locale = Locales.en;
    private static defaultLocale = Locales.en;
-   private static allowedLocaleKeys = Object.keys(Locales);
+   private static allowedLocaleKeys = Object.keys(Locales) as Array<localeType>;
 
    public static getService<T extends IGetTranslation>(
       service: HttpService, loginPage: boolean | undefined, callback: (translations: T[] | null) => void
@@ -51,7 +53,7 @@ export class TranslatePipe implements PipeTransform {
       return this.defaultLocale;
    }
 
-   public static getAllowedLocaleKeys(): string[] {
+   public static getAllowedLocaleKeys(): Array<localeType> {
       return this.allowedLocaleKeys;
    }
 
@@ -79,13 +81,13 @@ export class TranslatePipe implements PipeTransform {
       return this;
    }
 
-   public static setAllowedLocaleKeys(keys: Array<keyof typeof Locales>): typeof TranslatePipe {
+   public static setAllowedLocaleKeys(keys: Array<localeType>): typeof TranslatePipe {
       this.allowedLocaleKeys = keys;
       return this;
    }
 
-   public static getLocaleKey(locale: Locales): string {
-      return Object.keys(Locales).find((key) => Locales[key] === locale) || Object.keys(Locales)[0];
+   public static getLocaleKey(locale: Locales): localeType {
+      return (Object.keys(Locales).find((key) => Locales[key] === locale) || Object.keys(Locales)[0]) as localeType;
    }
 
    public static isAllowedLocale(locale: Locales): boolean {

@@ -1,6 +1,6 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.23",
+   "version": "1.0.26",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
@@ -20,27 +20,27 @@
    "homepage": "https://github.com/ha8rt/http-service#readme",
    "dependencies": {
       "@angular/animations": "^8.2.14",
-      "@angular/cli": "^8.3.21",
+      "@angular/cli": "^8.3.25",
       "@angular/common": "^8.2.14",
       "@angular/core": "^8.2.14",
       "@angular/forms": "^8.2.14",
       "@angular/platform-browser": "^8.2.14",
       "@angular/router": "^8.2.14",
-      "@fortawesome/free-regular-svg-icons": "^5.12.0",
-      "@fortawesome/free-solid-svg-icons": "^5.12.0",
+      "@fortawesome/free-regular-svg-icons": "^5.12.1",
+      "@fortawesome/free-solid-svg-icons": "^5.12.1",
       "@ha8rt/alert": "0.0.2",
       "@ha8rt/icon": "0.0.13",
       "@ha8rt/modal": "0.0.31",
       "@ha8rt/table": "0.0.64",
       "@types/file-saver": "^2.0.1",
       "file-saver": "^2.0.2",
-      "ngx-bootstrap": "^5.2.0",
+      "ngx-bootstrap": "^5.3.2",
       "ngx-spinner": "^8.1.0",
       "rxjs": "^6.5.4",
       "zone.js": "^0.9.1"
    },
    "devDependencies": {
       "tslint": "^5.20.1",
-      "typescript": "^3.7.3"
+      "typescript": "^3.7.5"
    }
 }
