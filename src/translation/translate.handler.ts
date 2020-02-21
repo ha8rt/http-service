@@ -31,7 +31,9 @@ export class TranslateHandler {
       }
    }
 
-   public static startSession<T extends IAppComponent, U extends IThisComponent>(AppComponent: T, thisComponent: U, callback: () => void) {
+   public static startSession<T extends IAppComponent, U extends IThisComponent>(
+      AppComponent: T, thisComponent: U, loginPage: boolean, callback: () => void
+   ) {
       AppComponent.session.acceptLanguages.split(',').some((accept) => {
          const locale = accept.split(';')[0].split('-')[0];
          if (Object.keys(Locales).includes(locale) && !this.localeParam) {
@@ -42,14 +44,19 @@ export class TranslateHandler {
          }
          return false;
       });
+      let runCallback = false;
       if (TranslatePipe.getLocale() !== TranslatePipe.getDefaultLocale()) {
-         TranslatePipe.getService(thisComponent.translateService, true, async () => {
+         TranslatePipe.getService(thisComponent.translateService, loginPage, async () => {
             const localeKey = TranslatePipe.getLocaleKey(TranslatePipe.getLocale());
             if (this.getLocale() !== localeKey) {
                this.setLocale(localeKey);
                await thisComponent.redirect.reloadPage(callback);
+               runCallback = true;
             }
          });
+      }
+      if (!runCallback) {
+         callback();
       }
    }
 

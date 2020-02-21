@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Locales } from '@ha8rt/modal';
+import { Observable, Subject } from 'rxjs';
 import { isResultValid } from '../interceptors/interceptors';
 import { HttpService } from '../service/service';
 import { translate } from './translate';
@@ -20,6 +21,9 @@ export type localeType = keyof typeof Locales;
    pure: false,
 })
 export class TranslatePipe implements PipeTransform {
+   private static changedSubject: Subject<void> = new Subject<void>();
+   public static changed: Observable<void> = TranslatePipe.changedSubject.asObservable();
+
    private static translations: ITranslation = {};
    private static locale = Locales.en;
    private static defaultLocale = Locales.en;
@@ -59,11 +63,13 @@ export class TranslatePipe implements PipeTransform {
 
    public static setTranslation(key: string, value: string): typeof TranslatePipe {
       this.translations[key] = value;
+      this.changedSubject.next();
       return this;
    }
 
    public static setTranslations(translations: ITranslation): typeof TranslatePipe {
       this.translations = Object.assign(this.translations, translations);
+      this.changedSubject.next();
       return this;
    }
 
@@ -88,6 +94,14 @@ export class TranslatePipe implements PipeTransform {
 
    public static getLocaleKey(locale: Locales): localeType {
       return (Object.keys(Locales).find((key) => Locales[key] === locale) || Object.keys(Locales)[0]) as localeType;
+   }
+
+   public static current(): localeType {
+      return this.getLocaleKey(this.getLocale());
+   }
+
+   public static default(): localeType {
+      return this.getLocaleKey(this.getDefaultLocale());
    }
 
    public static isAllowedLocale(locale: Locales): boolean {
