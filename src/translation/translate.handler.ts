@@ -44,18 +44,16 @@ export class TranslateHandler {
          }
          return false;
       });
-      let runCallback = false;
       if (TranslatePipe.getLocale() !== TranslatePipe.getDefaultLocale()) {
          TranslatePipe.getService(thisComponent.translateService, loginPage, async () => {
             const localeKey = TranslatePipe.getLocaleKey(TranslatePipe.getLocale());
             if (this.getLocale() !== localeKey) {
                this.setLocale(localeKey);
                await thisComponent.redirect.reloadPage(callback);
-               runCallback = true;
             }
+            callback();
          });
-      }
-      if (!runCallback) {
+      } else {
          callback();
       }
    }
