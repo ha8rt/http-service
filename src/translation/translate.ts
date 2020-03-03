@@ -14,7 +14,7 @@ export function translate(key: string): string | undefined {
    } else if (!key || !translations) {
       translation = key;
       // nem tartalmazza fordítást, vagy üres fordítást tartalmaz
-   } else if (!Object.keys(translations).includes(key) || translations[key].length === 0) {
+   } else if (!Object.keys(translations).includes(key) || translations[key]?.length === 0) {
       translation = key;
       // nincs hiba, visszaadjuk a fordítást
    } else {

@@ -31,13 +31,13 @@ export class TranslateHandler {
       }
    }
 
-   public static startSession<T extends IAppComponent, U extends IThisComponent>(
+   public static async startSession<T extends IAppComponent, U extends IThisComponent>(
       AppComponent: T, thisComponent: U, loginPage: boolean, callback: () => void
    ) {
       AppComponent.session.acceptLanguages.split(',').some((accept) => {
          const locale = accept.split(';')[0].split('-')[0];
          if (Object.keys(Locales).includes(locale) && !this.localeParam) {
-            if (this.getLocale() !== locale) {
+            if (this.getLocale() !== locale && !this.getLockedLocale()) {
                TranslatePipe.setLocale(Locales[locale]);
             }
             return true;
@@ -50,12 +50,22 @@ export class TranslateHandler {
             if (this.getLocale() !== localeKey) {
                this.setLocale(localeKey);
                await thisComponent.redirect.reloadPage(callback);
+            } else {
+               callback();
             }
-            callback();
          });
       } else {
-         callback();
+         this.setLocale(TranslatePipe.getLocaleKey(TranslatePipe.getLocale()));
+         await thisComponent.redirect.reloadPage(callback);
       }
+   }
+
+   public static setLockedLocale() {
+      localStorage.setItem('locked-locale', String(true));
+   }
+
+   public static getLockedLocale(): boolean {
+      return Boolean(localStorage.getItem('locked-locale'));
    }
 
    // static get locale(): localeType {

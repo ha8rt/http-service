@@ -39,6 +39,9 @@ export class HttpResponseInterceptorService {
 
             } else if (!isResultValid(res)) {
                blobToString(res.error, (result) => {
+                  if (!result && res.status === httpCodes.notFound) {
+                     result = 'Records are not found for this search!';
+                  }
                   this.error.change.next({
                      title: translate(res.statusText),
                      text: translate(result ? result : ' '),

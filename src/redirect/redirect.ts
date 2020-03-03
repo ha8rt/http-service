@@ -2,6 +2,7 @@ import { ActivatedRoute, Params, Router, RouterStateSnapshot } from '@angular/ro
 
 export class Redirect {
    private defaultUrl = '/';
+   private reloadUrl = '/reload';
 
    constructor(private router: Router, private route: ActivatedRoute) { }
 
@@ -42,12 +43,13 @@ export class Redirect {
 
    public async reloadPage(callback: () => void): Promise<boolean> {
       const { url, queryParams } = this.getUrlData(this.getUrlAfterRedirects() || '');
-      if (await this.router.navigate([this.defaultUrl])) {
+      if (await this.router.navigate([this.reloadUrl || this.defaultUrl])) {
          if (await this.router.navigate([url], { queryParams })) {
             callback();
             return true;
          }
       }
+      callback();
       return false;
    }
 
@@ -57,5 +59,13 @@ export class Redirect {
 
    public setDefaultUrl(defaultUrl: string) {
       this.defaultUrl = defaultUrl;
+   }
+
+   public getReloadUrl(): string {
+      return this.reloadUrl;
+   }
+
+   public setReloadUrl(reloadUrl: string) {
+      this.reloadUrl = reloadUrl;
    }
 }

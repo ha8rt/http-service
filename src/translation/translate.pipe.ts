@@ -68,7 +68,7 @@ export class TranslatePipe implements PipeTransform {
    }
 
    public static setTranslations(translations: ITranslation): typeof TranslatePipe {
-      this.translations = Object.assign(this.translations, translations);
+      this.translations = Object.assign({}, translations);
       this.changedSubject.next();
       return this;
    }
