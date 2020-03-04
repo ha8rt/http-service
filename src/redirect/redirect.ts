@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterStateSnapshot } from '@angular/router';
 
 export class Redirect {
@@ -21,15 +22,17 @@ export class Redirect {
    }
 
    public async toDefaultUrl(state?: RouterStateSnapshot, returnUrl = true) {
-      await this.router.navigate([this.defaultUrl], returnUrl ? {
+      const zone = new NgZone({ enableLongStackTrace: true });
+      await zone.run(() => this.router.navigate([this.defaultUrl], returnUrl ? {
          queryParams: { returnUrl: state?.url || this.getUrlAfterRedirects() },
-      } : {});
+      } : {}));
    }
 
    public async toReturnUrl() {
       const fullUrl = this.route.snapshot.queryParamMap.get('returnUrl') || this.getUrlAfterRedirects() || this.defaultUrl;
       const { url, queryParams } = this.getUrlData(fullUrl);
-      await this.router.navigate([url], { queryParams });
+      const zone = new NgZone({ enableLongStackTrace: true });
+      await zone.run(() => this.router.navigate([url], { queryParams }));
    }
 
    public getUrlData(url: string): { url: string, queryParams: Params } {
@@ -43,8 +46,10 @@ export class Redirect {
 
    public async reloadPage(callback: () => void): Promise<boolean> {
       const { url, queryParams } = this.getUrlData(this.getUrlAfterRedirects() || '');
-      if (await this.router.navigate([this.reloadUrl || this.defaultUrl])) {
-         if (await this.router.navigate([url], { queryParams })) {
+      // zone.run megoldja a form validációs hibákat, és a warningokat
+      const zone = new NgZone({ enableLongStackTrace: true });
+      if (await zone.run(() => this.router.navigate([this.reloadUrl || this.defaultUrl]))) {
+         if (await zone.run(() => this.router.navigate([url], { queryParams }))) {
             callback();
             return true;
          }
