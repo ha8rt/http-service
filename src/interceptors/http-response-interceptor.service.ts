@@ -1,12 +1,13 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ButtonType, InitButton, ModalHandler } from '@ha8rt/modal';
+import { replace } from 'lodash';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { httpCodes, internalErrors } from '../config/config';
 import { blobToString } from '../handlers/handlers';
-import { isResultValid } from './is.result.valid.handler';
 import { translate } from '../translation/translate';
+import { isResultValid } from './is.result.valid.handler';
 
 @Injectable({
    providedIn: 'root'
@@ -42,9 +43,16 @@ export class HttpResponseInterceptorService {
                   if (!result && res.status === httpCodes.notFound) {
                      result = 'Records are not found for this search!';
                   }
+                  const format = (str: string) => {
+                     let formatted = translate(str.split('#')[0].trim()) || '';
+                     str.split('#').slice(1).forEach((variable) => {
+                        formatted = replace(formatted, new RegExp('_' + variable.split('=')[0], 'g'), variable.split('=')[1]);
+                     });
+                     return formatted;
+                  };
                   this.error.change.next({
                      title: translate(res.statusText),
-                     text: translate(result ? result : ' '),
+                     text: result ? format(result) : ' ',
                      buttons: InitButton({ prefix: 'error', type: ButtonType.Ok }, 1)[0]
                   });
                   this.error.event.next();
