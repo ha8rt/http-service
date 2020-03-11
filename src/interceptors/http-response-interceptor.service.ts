@@ -46,7 +46,7 @@ export class HttpResponseInterceptorService {
                   const format = (str: string) => {
                      let formatted = translate(str.split('#')[0].trim()) || '';
                      str.split('#').slice(1).forEach((variable) => {
-                        formatted = replace(formatted, new RegExp('_' + variable.split('=')[0], 'g'), variable.split('=')[1]);
+                        formatted = replace(formatted, new RegExp('_' + variable.split('=')[0].trim(), 'g'), variable.split('=')[1].trim());
                      });
                      return formatted;
                   };
