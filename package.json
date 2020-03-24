@@ -1,6 +1,6 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.35",
+   "version": "1.0.36",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
@@ -26,8 +26,8 @@
       "@angular/forms": "^8.2.14",
       "@angular/platform-browser": "^8.2.14",
       "@angular/router": "^8.2.14",
-      "@fortawesome/free-regular-svg-icons": "^5.12.1",
-      "@fortawesome/free-solid-svg-icons": "^5.12.1",
+      "@fortawesome/free-regular-svg-icons": "^5.13.0",
+      "@fortawesome/free-solid-svg-icons": "^5.13.0",
       "@ha8rt/alert": "0.0.2",
       "@ha8rt/icon": "0.0.13",
       "@ha8rt/modal": "0.0.32",
@@ -43,6 +43,6 @@
    "devDependencies": {
       "@types/lodash": "^4.14.149",
       "tslint": "^5.20.1",
-      "typescript": "^3.7.5"
+      "typescript": "^3.8.3"
    }
 }
