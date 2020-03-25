@@ -1,8 +1,8 @@
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
    providedIn: 'root'
@@ -23,10 +23,12 @@ export class HttpLoadingInterceptorService implements HttpInterceptor {
       HttpLoadingInterceptorService.reqs++;
 
       return next.handle(req).pipe(finalize(() => {
-         HttpLoadingInterceptorService.reqs--;
-         if (HttpLoadingInterceptorService.reqs === 0) {
-            HttpLoadingInterceptorService.spinner.hide();
-         }
+         setTimeout(() => {
+            HttpLoadingInterceptorService.reqs--;
+            if (HttpLoadingInterceptorService.reqs === 0) {
+               HttpLoadingInterceptorService.spinner.hide();
+            }
+         }, 200);
       }));
    }
 }
