@@ -1,4 +1,5 @@
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Body } from '@ha8rt/modal';
 import { saveAs } from 'file-saver';
 import { forkJoin, Observable, Subject } from 'rxjs';
@@ -14,7 +15,7 @@ export interface IApi {
 export class HttpService {
    private api = '';
 
-   constructor(private http: HttpClient, api?: string) {
+   constructor(private http: HttpClient, api?: string, private router?: Router, private route?: ActivatedRoute) {
       this.api = api ? api : this.api;
    }
 
@@ -23,8 +24,19 @@ export class HttpService {
       return this;
    }
 
+   public getParams() {
+      return this.route?.snapshot.queryParams;
+   }
+
    public get<T>(params: IObject | IQuery, callback?: ICallback<T>): IObservable<T> {
       const data: IData = { http: this.http, api: this.api, params: params?.toObject ? params.toObject() : params };
+      if (this.router && this.route && Object.keys(data.params || {}).length > 0) {
+         this.router.navigate(['.'], {
+            relativeTo: this.route, queryParams: Object.assign({}, data.params, {
+               from: undefined, to: undefined,
+            }),
+         });
+      }
       if (!callback) {
          return Observables.get<T>(data);
       }
