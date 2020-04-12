@@ -44,19 +44,20 @@ export class TranslateHandler {
          }
          return false;
       });
+      const process = async () => {
+         const localeKey = TranslatePipe.getLocaleKey(TranslatePipe.getLocale());
+         if (this.getLocale() !== localeKey) {
+            this.setLocale(localeKey);
+            await thisComponent.redirect.reloadPage(callback);
+         } else {
+            callback();
+         }
+      };
       if (TranslatePipe.getLocale() !== TranslatePipe.getDefaultLocale()) {
-         TranslatePipe.getService(thisComponent.translateService, loginPage, async () => {
-            const localeKey = TranslatePipe.getLocaleKey(TranslatePipe.getLocale());
-            if (this.getLocale() !== localeKey) {
-               this.setLocale(localeKey);
-               await thisComponent.redirect.reloadPage(callback);
-            } else {
-               callback();
-            }
-         });
+         TranslatePipe.getService(thisComponent.translateService, loginPage, process);
       } else {
-         this.setLocale(TranslatePipe.getLocaleKey(TranslatePipe.getLocale()));
-         await thisComponent.redirect.reloadPage(callback);
+         TranslatePipe.setTranslations({});
+         await process();
       }
    }
 
