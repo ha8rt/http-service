@@ -19,6 +19,7 @@ export class HttpResponseInterceptorService {
       private onUnauthorized: (error: any, url: string) => void,
       private internalError: ModalHandler,
       private error: ModalHandler,
+      private noMessagePaths: string[] = [],
    ) { }
 
    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -38,7 +39,7 @@ export class HttpResponseInterceptorService {
             } else if (internalErrors.includes(res.status)) {
                this.internalError.event.next();
 
-            } else if (!isResultValid(res)) {
+            } else if (!isResultValid(res) && !this.noMessagePaths.includes(req.url)) {
                blobToString(res.error, (result) => {
                   if (!result && res.status === httpCodes.notFound) {
                      result = 'Records are not found for this search!';
