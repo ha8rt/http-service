@@ -28,14 +28,20 @@ export class HttpService {
       return this.route?.snapshot.queryParams;
    }
 
-   public get<T>(params: IObject | IQuery, callback?: ICallback<T>): IObservable<T> {
-      const data: IData = { http: this.http, api: this.api, params: params?.toObject ? params.toObject() : params };
-      if (this.router && this.route && Object.keys(data.params || {}).length > 0) {
+   public setParams(params: IObject | undefined) {
+      if (this.router && this.route && Object.keys(params || {}).length > 0) {
          this.router.navigate(['.'], {
-            relativeTo: this.route, queryParams: Object.assign({}, data.params, {
+            relativeTo: this.route, queryParams: Object.assign({}, params, {
                from: undefined, to: undefined,
             }),
          });
+      }
+   }
+
+   public get<T>(params: IObject | IQuery, callback?: ICallback<T>, options = { setParams: true }): IObservable<T> {
+      const data: IData = { http: this.http, api: this.api, params: params?.toObject ? params.toObject() : params };
+      if (options.setParams) {
+         this.setParams(data.params);
       }
       if (!callback) {
          return Observables.get<T>(data);

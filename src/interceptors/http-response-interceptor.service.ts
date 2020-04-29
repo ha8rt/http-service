@@ -39,7 +39,7 @@ export class HttpResponseInterceptorService {
             } else if (internalErrors.includes(res.status)) {
                this.internalError.event.next();
 
-            } else if (!isResultValid(res) && !this.noMessagePaths.includes(req.url)) {
+            } else if (!isResultValid(res) && !this.noMessagePaths.some((path) => req.urlWithParams.startsWith(path))) {
                blobToString(res.error, (result) => {
                   if (!result && res.status === httpCodes.notFound) {
                      result = 'Records are not found for this search!';
