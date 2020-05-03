@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpRequest } from '@angular
 import { Injectable } from '@angular/core';
 import { ButtonType, InitButton, ModalHandler } from '@ha8rt/modal';
 import { replace } from 'lodash';
-import { Observable, throwError } from 'rxjs';
+import { Observable, pipe, throwError, UnaryFunction } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { httpCodes, internalErrors } from '../config/config';
 import { blobToString } from '../handlers/handlers';
@@ -20,10 +20,11 @@ export class HttpResponseInterceptorService {
       private internalError: ModalHandler,
       private error: ModalHandler,
       private noMessagePaths: string[] = [],
+      private reload: ModalHandler,
    ) { }
 
    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-      return next.handle(req).pipe(
+      const handleError: UnaryFunction<any, any> = pipe(
          map((event: HttpEvent<any>) => {
             return event;
          }),
@@ -36,6 +37,15 @@ export class HttpResponseInterceptorService {
                if (this.isRight('LOGGED_IN')) {
                   this.onUnauthorized(res.error, req.urlWithParams);
                }
+            } else if (res.status === httpCodes.upgradeRequired) {
+               this.reload.event.next();
+               const subscription = this.reload.outputObs.subscribe((body) => {
+                  if (body.getKey() === 'reload-ok') {
+                     subscription.unsubscribe();
+                     window.location.reload();
+                  }
+               });
+               return handleError(next.handle(req));
             } else if (internalErrors.includes(res.status)) {
                this.internalError.event.next();
 
@@ -62,5 +72,6 @@ export class HttpResponseInterceptorService {
             return throwError(res);
          })
       );
+      return handleError(next.handle(req));
    }
 }
