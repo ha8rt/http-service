@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Locales } from '@ha8rt/modal';
 import { Observable, Subject } from 'rxjs';
-import { isResultValid } from '../interceptors/interceptors';
+import { isResultValid } from '../handlers/is.result.valid.handler';
 import { HttpService } from '../service/service';
 import { translate } from './translate';
 

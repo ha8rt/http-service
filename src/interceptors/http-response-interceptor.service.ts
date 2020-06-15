@@ -6,8 +6,8 @@ import { Observable, pipe, throwError, UnaryFunction } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { httpCodes, internalErrors } from '../config/config';
 import { blobToString } from '../handlers/handlers';
+import { isResultValid } from '../handlers/is.result.valid.handler';
 import { translate } from '../translation/translate';
-import { isResultValid } from './is.result.valid.handler';
 
 @Injectable({
    providedIn: 'root'

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Body } from '@ha8rt/modal';
 import { saveAs } from 'file-saver';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { isResultValid } from '../interceptors/interceptors';
+import { isResultValid } from '../handlers/is.result.valid.handler';
 import { ICallback, IData, IObject, IObservable, Observables } from './observables';
 import { IQuery } from './query';
 
@@ -31,7 +31,10 @@ export class HttpService {
    public setParams(params: IObject | undefined) {
       if (this.router && this.route && Object.keys(params || {}).length > 0) {
          this.router.navigate(['.'], {
-            relativeTo: this.route, queryParams: Object.assign({}, params, {
+            relativeTo: this.route, queryParams: Object.assign({
+               navbar: this.route.snapshot.queryParamMap.get('navbar'),
+               footer: this.route.snapshot.queryParamMap.get('footer'),
+            }, params, {
                from: undefined, to: undefined,
             }),
          });

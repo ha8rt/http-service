@@ -1,12 +1,12 @@
 {
    "name": "@ha8rt/http.service",
-   "version": "1.0.45",
+   "version": "1.0.46",
    "description": "",
    "main": "dist/index.js",
    "types": "dist/index.d.ts",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "publish-dist": "rm -rf dist && rm tsconfig.tsbuildinfo && tsc --extendedDiagnostics && cp package.json dist/ && cp package-lock.json dist/ && npm publish dist"
+      "publish-dist": "rm -rf dist && rm tsconfig.tsbuildinfo && tsc --extendedDiagnostics && npm publish"
    },
    "repository": {
       "type": "git",
@@ -44,5 +44,10 @@
       "@types/lodash": "^4.14.149",
       "tslint": "^5.20.1",
       "typescript": "^3.8.3"
-   }
+   },
+   "files": [
+      "dist/*",
+      "package.json",
+      "package-lock.json"
+   ]
 }
