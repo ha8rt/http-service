@@ -7,7 +7,7 @@ import { catchError, map } from 'rxjs/operators';
 import { httpCodes, internalErrors } from '../config/config';
 import { blobToString } from '../handlers/handlers';
 import { isResultValid } from '../handlers/is.result.valid.handler';
-import { translate } from '../translation/translate';
+import { translate as translatePipe } from '../translation/translate';
 
 @Injectable({
    providedIn: 'root'
@@ -21,6 +21,7 @@ export class HttpResponseInterceptorService {
       private error: ModalHandler,
       private noMessagePaths: string[] = [],
       private reload: ModalHandler,
+      private translate?: (key: string) => string | undefined,
    ) { }
 
    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -55,14 +56,14 @@ export class HttpResponseInterceptorService {
                      result = 'Records are not found for this search!';
                   }
                   const format = (str: string) => {
-                     let formatted = translate(str.split('#')[0].trim()) || '';
+                     let formatted = (this.translate || translatePipe)(str.split('#')[0].trim()) || '';
                      str.split('#').slice(1).forEach((variable) => {
                         formatted = replace(formatted, new RegExp('_' + variable.split('=')[0].trim(), 'g'), variable.split('=')[1].trim());
                      });
                      return formatted;
                   };
                   this.error.change.next({
-                     title: translate(res.statusText),
+                     title: (this.translate || translatePipe)(res.statusText),
                      text: result ? format(result) : ' ',
                      buttons: InitButton({ prefix: 'error', type: ButtonType.Ok }, 1)[0]
                   });
